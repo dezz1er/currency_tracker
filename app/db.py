@@ -1,19 +1,16 @@
-from app.api.models.user import UserInDb
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
+
+from app.core.config import settings
+
+async_engine = create_async_engine(settings.ASYNC_DATABASE_URL)
+async_session_maker = async_sessionmaker(async_engine, class_=AsyncSession)
 
 
-#  БД для тестирования правильности работы
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-    }
-}
+async def get_async_session():
+    async with async_session_maker() as session:
+        yield session
 
 
-def get_user(username: str, db=fake_users_db):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
+class Base(DeclarativeBase):
+    pass
