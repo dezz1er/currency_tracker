@@ -3,6 +3,7 @@ from app.api.models.user import UserRegistration
 
 router = APIRouter(prefix='/auth', tags=['Authentication'])
 
+
 @router.post('/register')
 async def registration(userdata: UserRegistration,):
     if userdata.username in user_db:
