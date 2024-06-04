@@ -9,7 +9,10 @@ class SessionCreate(BaseModel):
     user_id: int
     fingerprint: str
     exp_at: Annotated[float, 'datetime.timestamp()']
-    created_at: Annotated[float | datetime, 'datetime.timestamp(), datetime'] = datetime.now()
+    created_at: Annotated[
+        float | datetime,
+        'datetime.timestamp(), datetime'
+    ] = datetime.now()
 
 
 class Session(SessionCreate):
@@ -27,3 +30,8 @@ class Payload(BaseModel):
 class Tokens(BaseModel):
     access_token: str | None = None
     refresh_token: str
+
+
+class SessionToRedis(BaseModel):
+    refresh_token: str
+    session: Session

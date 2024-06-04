@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 
 from app.db import async_session_maker
-from api.repositories import SessionsRepository, UserRepository
+from app.repositories import UserRepository
 
 
 class IUnitOfWork(ABC):
-    sessions_repos: SessionsRepository
     users_repos: UserRepository
 
     @abstractmethod
@@ -36,7 +35,6 @@ class UnitOfWork(IUnitOfWork):
     async def __aenter__(self):
         self.session = self.session_factory()
         # repositories
-        self.session_repos = SessionsRepository(self.session)
         self.users_repos = UserRepository(self.session)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
