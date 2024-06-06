@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from db import get_user
-from api.models.models import User
+from app.api.schemas.user import User
 import jwt
 
 from typing import Annotated

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.models.models import Users
+from app.api.schemas.user import Users
 from app.repositories.base_repository import Repository
 
 

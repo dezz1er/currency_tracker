@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Annotated
 from datetime import datetime
-from api.models.roles import Roles
+from app.api.schemas.roles import Roles
 
 
 class SessionCreate(BaseModel):

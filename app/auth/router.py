@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from app.api.models.user import UserRegistration
+from app.models.user import UserRegistration
 
 router = APIRouter(prefix='/auth', tags=['Authentication'])
 

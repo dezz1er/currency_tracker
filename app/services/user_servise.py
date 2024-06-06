@@ -7,7 +7,7 @@ class UserService:
         self.uow = uow
 
     async def get_user(
-            self, user_id: int | None, 
+            self, user_id: int | None,
             username: str | None = None) -> UserInDb:
         if any(user_id, username):
             async with self.uow:
