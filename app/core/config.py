@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     API_KEY: str
+    APP_NAME: str
+    ADMIN_EMAIL: str
 
     SECRET_KEY: str
     ALGORITHM: str
@@ -15,9 +17,16 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+    DB_DRIVER_SYNC: str
+    DB_DRIVER_ASYNC: str
+
+    REDIS_HOST: str = 'localhost'
+    REDIS_PORT: int = 6379
+    REDIS_AUTH_DB: int = 0
+    USER_MAX_ACTIVE_SESSIONS: int = 5
 
     @property
-    def async_database_url(self):
+    def ASYNC_DATABASE_URL(self):
         return (
             f"postgresql+asyncpg://{self.DB_USER}:"
             f"{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"

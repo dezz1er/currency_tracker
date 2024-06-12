@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from app.db import async_session_maker
-from app.repositories import UserRepository
+from app.database.db import async_session_maker
+from app.repositories.repositories import UserRepository
 
 
 class IUnitOfWork(ABC):

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import BigInteger, String, ForeignKey
-
+from app.api.schemas.user import UserInDb
 from app.database.db import Base
 
 
@@ -21,3 +21,11 @@ class Users(Base):
     @staticmethod
     def get_primary_key():
         return Users.user_id
+
+    def to_read_model(self) -> UserInDb:
+        return UserInDb(
+            id=self.user_id,
+            username=self.username,
+            hashed_password=self.password,
+            role=self.role
+        )

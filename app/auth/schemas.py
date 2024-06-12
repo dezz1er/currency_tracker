@@ -4,9 +4,8 @@ from datetime import datetime
 from app.api.schemas.roles import Roles
 
 
-class SessionCreate(BaseModel):
-    refresh_token: str
-    user_id: int
+class Session(BaseModel):
+    username: str
     fingerprint: str
     exp_at: Annotated[float, 'datetime.timestamp()']
     created_at: Annotated[
@@ -14,9 +13,7 @@ class SessionCreate(BaseModel):
         'datetime.timestamp(), datetime'
     ] = datetime.now()
 
-
-class Session(SessionCreate):
-    session_id: str
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Payload(BaseModel):

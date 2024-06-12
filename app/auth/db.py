@@ -2,8 +2,8 @@ from aioredis import Redis, ConnectionPool
 from app.core.config import settings
 
 
-def create_redis_pool():
-    return ConnectionPool(
+async def create_redis_pool():
+    return await ConnectionPool(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
         db=settings.REDIS_AUTH_DB,

@@ -19,7 +19,7 @@ router = APIRouter(
 async def check_user(
         userdata: Annotated[OAuth2PasswordRequestForm, Depends()],
         user_service: user_service_dep):
-    user: UserLogin = await user_service.get_user(userdata.username)
+    user: UserLogin = await user_service.get_user(username=userdata.username)
     if not user:
         raise HTTPException
     security.verify_password(userdata.password, user.password)
@@ -29,7 +29,7 @@ async def check_user(
 @router.post('/signin')
 async def signin(userdata: UserRegistration, user_service: user_service_dep):
     userdata.password = security.hash_password(userdata.password)
-    user = await user_service.create_user(userdata)
+    user = await user_service.add_user(userdata)
     return user
 
 
