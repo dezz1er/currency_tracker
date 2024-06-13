@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import Depends
 from app.services.user_servise import UserService
 from app.utils.uow import UnitOfWork, IUnitOfWork
-from aioredis import Redis
+from redis import Redis
 from app.auth.db import get_redis
 from app.auth import security
 

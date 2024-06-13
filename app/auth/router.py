@@ -41,7 +41,8 @@ async def authentication(response: Response,
                              ] = Depends(check_user)):
     access_token: str = security.create_access_token(user)
     session_to_add: SessionToRedis = security.create_session(user, fingerprint)
-    add_session(user, session_to_add.refresh_token, session_to_add.session)
+    add_session(
+        user, session_to_add.refresh_token, session_to_add.session)
     security.set_tokens_to_cookies(
         response,
         Tokens(
