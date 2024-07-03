@@ -1,19 +1,16 @@
-from httpx import AsyncClient
+from app.database.models import Users
 
 
-from tests.errors import OPERATION_FAIL, DATA_CONVERT_FAIL
-
-
-global access_token, refresh_token
-access_token: str | None = None
-refresh_token: str | None = None
-
-
-async def test_registration(ac: AsyncClient):
-    response = await ac.post("/auth/signin", json={
-        "username": "user_test",
-        "password": "password_test"
-    }
+def test_create_user(session, add_roles):
+    user_role, _ = add_roles
+    user = Users(
+        username='John',
+        password='1243',
+        role=user_role.role
     )
-    assert response.status_code == 200, OPERATION_FAIL
-    assert response.json().get("username") == "user_test", DATA_CONVERT_FAIL
+    session.add(user)
+    session.commit()
+    retrieved_user = session.query(Users).filter_by(username="John").first()
+    assert retrieved_user is not None
+    assert retrieved_user.username == "John"
+    assert retrieved_user.role == user_role.role

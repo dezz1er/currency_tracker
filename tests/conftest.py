@@ -1,48 +1,52 @@
-import asyncio
-
 import pytest
-from fastapi.testclient import TestClient
-from httpx import AsyncClient
-from sqlalchemy.pool import NullPool
-from sqlalchemy.ext.asyncio import (
-    create_async_engine, AsyncSession, async_sessionmaker)
-from typing import AsyncGenerator
-
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from app.database.db import Base
+from app.database.models import Roles
 
 from app.core.config import settings
-from main import app
 
 
-engine_test = create_async_engine(
-    settings.ASYNC_DATABASE_URL, poolclass=NullPool)
-async_session_maker = async_sessionmaker(
-    engine_test, class_=AsyncSession, expire_on_commit=False
-)
-Base.metadata.bind = engine_test
+@pytest.fixture(scope="session")
+def engine():
+    return create_engine(settings.TEST_DATABASE_URL)
 
 
-@pytest.fixture(autouse=True, scope='session')
-async def prepare_database():
-    async with engine_test.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+@pytest.fixture(scope="session")
+def create_tables(engine):
+    Base.metadata.create_all(engine)
     yield
-    async with engine_test.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+    Base.metadata.drop_all(engine)
 
 
-@pytest.fixture(scope='session')
-def event_loop(request):
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
+@pytest.fixture
+def session(engine, create_tables):
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    yield session
+    session.close()
 
 
-client = TestClient(app)
+@pytest.fixture
+def add_roles(session):
+    user_role = Roles(role='user')
+    admin_role = Roles(role='admin')
+    session.add(user_role)
+    session.add(admin_role)
+    session.commit()
+    return user_role, admin_role
 
 
-@pytest.fixture(scope='session')
-async def ac() -> AsyncGenerator[AsyncClient, None]:
-    async with AsyncClient(app=app, base_url='http://127.0.0.1') as ac:
-        yield ac
+@pytest.fixture
+def add_roles(session):
+    user_role = Roles(role='user')
+    admin_role = Roles(role='admin')
+    session.add(user_role)
+    session.add(admin_role)
+    session.commit()
+    
+    # Проверка
+    roles = session.query(Roles).all()
+    print("Roles in DB:", [role.role for role in roles])
+    
+    return user_role, admin_role
