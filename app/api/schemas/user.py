@@ -12,6 +12,10 @@ class UserLogin(BaseModel):
 class UserRegistration(UserLogin):
     role: str = Roles.user.value
 
+    @classmethod
+    def from_userlogin(cls, user_login: UserLogin):
+        return cls(username=user_login.username, password=user_login.password)
+
 
 class User(BaseModel):
     id: int

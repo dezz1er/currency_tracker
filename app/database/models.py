@@ -14,8 +14,8 @@ class Users(Base):
     __tablename__ = 'users'
     user_id: Mapped[int] = mapped_column(
         BigInteger, primary_key=True, index=True, autoincrement=True)
-    username: Mapped[str]
-    password: Mapped[str]
+    username: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(ForeignKey(Roles.role))
 
     @staticmethod

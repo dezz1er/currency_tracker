@@ -34,19 +34,16 @@ def add_roles(session):
     session.add(user_role)
     session.add(admin_role)
     session.commit()
-    return user_role, admin_role
 
-
-@pytest.fixture
-def add_roles(session):
-    user_role = Roles(role='user')
-    admin_role = Roles(role='admin')
-    session.add(user_role)
-    session.add(admin_role)
-    session.commit()
-    
-    # Проверка
     roles = session.query(Roles).all()
     print("Roles in DB:", [role.role for role in roles])
-    
+
     return user_role, admin_role
+
+
+@pytest.fixture(scope="session")
+def test_user():
+    return {
+        "username": "testuser",
+        "password": "1234"
+    }

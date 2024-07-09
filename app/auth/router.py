@@ -1,7 +1,7 @@
 from fastapi import (APIRouter, HTTPException,
                      Depends, Response, Request)
 from fastapi.security import OAuth2PasswordRequestForm
-from app.api.schemas.user import UserRegistration, UserLogin
+from app.api.schemas.user import UserLogin
 from typing import Annotated
 
 import app.auth.security as security
@@ -27,10 +27,16 @@ async def check_user(
 
 
 @router.post('/signin')
-async def signin(userdata: UserRegistration, user_service: user_service_dep):
-    userdata.password = security.hash_password(userdata.password)
-    user = await user_service.add_user(userdata)
-    return user
+async def signin(userdata: UserLogin, user_service: user_service_dep):
+    try:
+        userdata.password = security.hash_password(userdata.password)
+        user = await user_service.add_user(userdata)
+        return user
+    except HTTPException as e:
+        if e.status_code == 400 and e.detail == "Username already exists":
+            raise HTTPException(status_code=400, detail="Username already exists")
+        else:
+            raise e
 
 
 @router.post('/login')

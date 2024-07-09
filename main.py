@@ -4,7 +4,7 @@ from app.auth.router import router as auth_router
 from app.log.logger import logger
 
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 app.include_router(auth_router)
 

@@ -1,4 +1,8 @@
 from app.database.models import Users
+from fastapi.testclient import TestClient
+from main import app
+
+client = TestClient(app)
 
 
 def test_create_user(session, add_roles):
@@ -14,3 +18,11 @@ def test_create_user(session, add_roles):
     assert retrieved_user is not None
     assert retrieved_user.username == "John"
     assert retrieved_user.role == user_role.role
+
+
+def test_signin(test_user):
+    response = client.post("/auth/signin", json=test_user)
+    assert response.status_code == 200
+    data = response.json()
+    assert "username" in data
+    assert data["username"] == test_user["username"]

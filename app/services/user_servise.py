@@ -1,5 +1,7 @@
 from app.utils.uow import IUnitOfWork
 from app.api.schemas.user import UserRegistration, UserLogin
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 
 
 class UserService:
@@ -25,9 +27,18 @@ class UserService:
                     return UserLogin.model_validate(user)
                 raise Exception
 
-    async def add_user(self, user_data: UserRegistration):
+    async def add_user(self, user_data: UserLogin):
+        user_registration = UserRegistration.from_userlogin(user_data)
         async with self.uow:
-            stmt = await self.uow.users_repos.add_one(user_data.model_dump())
-            result = stmt.to_read_model()
-            await self.uow.commit()
-            return result
+            user_data_dict = user_registration.model_dump()
+            try:
+                stmt = await self.uow.users_repos.add_one(user_data_dict)
+                result = stmt.to_read_model()
+                await self.uow.commit()
+                return result
+            except IntegrityError:
+                await self.uow.rollback()
+                raise HTTPException(
+                    status_code=400,
+                    detail="Username already exists"
+                    )
